@@ -1,6 +1,6 @@
 #Requires -RunAsAdministrator
 
-$user = "snake"
+$user = ""
 $group = "Administrators"
 $taskName = "Remove-$user-Admin"
 
@@ -16,4 +16,4 @@ if ($isAdmin) {
 # Cancel scheduled task
 Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
 
-Write-Host "Admin access revoked. snake must reconnect SSH for changes to apply." -ForegroundColor Cyan
+Write-Host "Admin access revoked. user must reconnect SSH for changes to apply." -ForegroundColor Cyan
