@@ -3,7 +3,7 @@ param(
     [int]$Minutes = 30
 )
 
-$user = "snake"
+$user = ""
 $group = "Administrators"
 
 # Check if already admin
@@ -34,4 +34,4 @@ Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Pr
 Write-Host "Auto-revoke at: $($removeTime.ToString('HH:mm:ss'))" -ForegroundColor Cyan
 Write-Host "Manual revoke: .\admin-revoke.ps1" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "IMPORTANT: snake must log out and back in (or reconnect SSH) for admin to take effect!" -ForegroundColor Yellow
+Write-Host "IMPORTANT: user must log out and back in (or reconnect SSH) for admin to take effect!" -ForegroundColor Yellow
