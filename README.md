@@ -1,12 +1,27 @@
+This is just a dirty work around for when you need to add a non-admin account to the admin group over ssh for a short period of time
+
 # Windows Admin Scripts
 
 PowerShell scripts for managing WSL, SSH, and user privileges on Windows.
+
+## Configuration
+
+Several scripts require username configuration. Edit the following variables at the top of each script:
+
+| Script | Variable | Description |
+|--------|----------|-------------|
+| admin-grant.ps1 | `$user` | User to grant temporary admin access |
+| admin-grant.ps1 | `$adminUser` | Admin account whose password is required |
+| admin-revoke.ps1 | `$user` | User to revoke admin access from |
+| admin-status.ps1 | `$user` | User to check admin status for |
+
+---
 
 ## Scripts
 
 ### wsl-restart-and-keepalive.ps1
 
-Force restart a hanging WSL instance and optionally create a scheduled task to keep WiFi alive.
+Force restart a hanging WSL instance and create a scheduled task to keep WiFi alive.
 
 ```powershell
 .\wsl-restart-and-keepalive.ps1
@@ -84,17 +99,24 @@ Set-Content -Path "C:\bin\sudo.cmd" -Value '@powershell -NoProfile -ExecutionPol
 
 ### admin-grant.ps1
 
-Temporarily add a user to the Administrators group.
+Temporarily add a user to the Administrators group. Requires admin account password.
 
 ```powershell
 .\admin-grant.ps1              # 30 minutes (default)
 .\admin-grant.ps1 -Minutes 60  # 1 hour
 ```
 
-**Requires:** Admin
+**Requires:** Admin privileges, admin account password
+
+**Configuration:**
+```powershell
+$user = "target_user"      # User to grant admin access
+$adminUser = "admin_user"  # Admin account for password validation
+```
 
 **Actions:**
-- Adds `snake` to Administrators group
+- Prompts for admin account password (validated against local account)
+- Adds target user to Administrators group
 - Schedules automatic removal after X minutes
 - User must reconnect SSH for changes to take effect
 
@@ -110,6 +132,11 @@ Manually remove a user from Administrators before the timer expires.
 
 **Requires:** Admin
 
+**Configuration:**
+```powershell
+$user = "target_user"  # User to revoke admin access from
+```
+
 ---
 
 ### admin-status.ps1
@@ -122,20 +149,26 @@ Check if the user currently has admin privileges and when they expire.
 
 **Example output:**
 ```
-snake is currently in Administrators
+target_user is currently in Administrators
 Auto-revoke scheduled: 2/14/2026 3:45:00 PM
+```
+
+**Configuration:**
+```powershell
+$user = "target_user"  # User to check
 ```
 
 ---
 
 ## Temporary Admin Workflow
 
-1. Admin (mdavi) grants access:
+1. Admin grants access:
    ```powershell
    .\admin-grant.ps1 -Minutes 60
+   Enter password for admin_user: ********
    ```
 
-2. User (snake) disconnects and reconnects SSH
+2. Target user disconnects and reconnects SSH
 
 3. User now has full admin — all commands run elevated automatically
 
