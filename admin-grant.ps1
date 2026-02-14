@@ -3,9 +3,12 @@ param(
     [int]$Minutes = 30
 )
 
-$user = "snake"
+#set the ssh user's name here
+$user = ""
 $group = "Administrators"
-$adminUser = "mdavi"
+
+# Should be the username of the admin account
+$adminUser = ""
 
 # Prompt for admin password
 $securePass = Read-Host -Prompt "Enter password for $adminUser" -AsSecureString
@@ -50,4 +53,4 @@ Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Pr
 Write-Host "Auto-revoke at: $($removeTime.ToString('HH:mm:ss'))" -ForegroundColor Cyan
 Write-Host "Manual revoke: .\admin-revoke.ps1" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "IMPORTANT: snake must log out and back in (or reconnect SSH) for admin to take effect!" -ForegroundColor Yellow
+Write-Host "IMPORTANT: The user must log out and back in (or reconnect SSH) for admin to take effect!" -ForegroundColor Yellow
