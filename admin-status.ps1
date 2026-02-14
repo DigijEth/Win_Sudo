@@ -1,4 +1,4 @@
-$user = "snake"
+$user = ""
 $group = "Administrators"
 $taskName = "Remove-$user-Admin"
 
