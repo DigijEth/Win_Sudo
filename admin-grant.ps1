@@ -3,8 +3,24 @@ param(
     [int]$Minutes = 30
 )
 
-$user = ""
+$user = "snake"
 $group = "Administrators"
+$adminUser = "mdavi"
+
+# Prompt for admin password
+$securePass = Read-Host -Prompt "Enter password for $adminUser" -AsSecureString
+
+# Validate against Windows
+Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+$ctx = New-Object System.DirectoryServices.AccountManagement.PrincipalContext([System.DirectoryServices.AccountManagement.ContextType]::Machine)
+$cred = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePass))
+
+if (-not $ctx.ValidateCredentials($adminUser, $cred)) {
+    Write-Host "Invalid password." -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "Authenticated." -ForegroundColor Green
 
 # Check if already admin
 $isAdmin = (Get-LocalGroupMember -Group $group -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "*\$user" })
@@ -34,4 +50,4 @@ Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Pr
 Write-Host "Auto-revoke at: $($removeTime.ToString('HH:mm:ss'))" -ForegroundColor Cyan
 Write-Host "Manual revoke: .\admin-revoke.ps1" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "IMPORTANT: user must log out and back in (or reconnect SSH) for admin to take effect!" -ForegroundColor Yellow
+Write-Host "IMPORTANT: snake must log out and back in (or reconnect SSH) for admin to take effect!" -ForegroundColor Yellow
